@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bp.baseProject.mapper.AdminLoginMapper" >
+
+  	
+	<select id="selectAdminUserCount" resultType="int" parameterType="com.bp.baseProject.entity.AdminUser">
+		SELECT 
+		  COUNT(1) 
+		FROM
+		  admin_users 
+		WHERE NAME = #{name} 
+		  AND PASSWORD = #{password}
+	</select>  	
+	
+	<select id="selectAdminUserRoles" parameterType="String" resultType="com.bp.baseProject.entity.AdminUser">
+		SELECT 
+		  t1.`id`,
+		  t2.`role_id` as roleId,
+		  t1.`name` 
+		FROM
+		  admin_users t1,
+		  admin_user_role t2 
+		WHERE t1.`id` = t2.`admin_user_id` 
+		  AND t1.`name` = #{name}
+	</select>
+	
+	<select id="selectAdminRoleIdCount" parameterType="String" resultType="int">
+		SELECT 
+		  COUNT(1) 
+		FROM
+		  admin_roles 
+		WHERE id = #{id}
+	</select>
+</mapper>

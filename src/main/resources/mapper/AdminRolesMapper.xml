@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bp.baseProject.mapper.AdminRolesMapper" >
+  	
+  	<select id="selectAdminRolesInfo" resultType="com.bp.baseProject.entity.AdminRoles" parameterType="com.bp.baseProject.entity.AdminRoles">
+  		SELECT 
+		  id,
+		  NAME,
+		  display_name AS displayName,
+		  description,
+		  create_time AS createdTime,
+		  update_time AS updateTime
+		FROM
+		  admin_roles 
+		LIMIT #{limitFrom}, #{pageSize}
+  	</select>
+  	
+  	<select id="selectAdminRolesInfoCount" resultType="int" parameterType="com.bp.baseProject.entity.AdminRoles">
+		SELECT 
+		  COUNT(1) 
+		FROM
+		  admin_roles
+  	</select>
+  	
+  	<insert id="insertAdminRole" parameterType="com.bp.baseProject.entity.AdminRoles">
+  		INSERT INTO admin_roles (id,NAME, display_name, description)
+		VALUES
+		  (#{id},#{name}, #{displayName}, #{description})
+  	</insert>
+  	
+  	<select id="selectAdminRolesInfoById" resultType="com.bp.baseProject.entity.AdminRoles" parameterType="string">
+  		SELECT 
+  		  id,
+		  NAME,
+		  display_name	as displayName,
+		  description 
+		FROM
+		  admin_roles 
+		WHERE id = #{id}
+  	</select>
+  	
+  	<update id="updateAdminRole" parameterType="com.bp.baseProject.entity.AdminRoles">
+  		UPDATE 
+		  admin_roles 
+		SET
+		  display_name = #{displayName},
+		  description = #{description} 
+		WHERE id = #{id}
+  	</update>
+  	
+  	<delete id="deleteAdminRole" parameterType="string">
+  		DELETE 
+		FROM
+		  admin_roles
+		WHERE id = #{id}
+  	</delete>
+  	
+<!--  	<select id="selectPermissionRole" resultType="com.bp.baseProject.entity.AdminPermissionRole" parameterType="string">-->
+<!--  		SELECT -->
+<!--		  permission_id AS permissionId,-->
+<!--		  role_id AS roleId -->
+<!--		FROM-->
+<!--		  admin_permission_role -->
+<!--		WHERE role_id = #{roleId}-->
+<!--  	</select>-->
+  	
+  	<delete id="deletePermissionRole" parameterType="string">
+  		DELETE 
+		FROM
+		  admin_role_menu
+		WHERE role_id = #{roleId}
+  	</delete>
+  	
+  	<insert id="insertPermissionRole" parameterType="map">
+  		INSERT INTO admin_role_menu (id,menu_id, role_id)
+		VALUES  (UUID(),#{permissionId}, #{roleId})
+  	</insert>
+
+	<select id="getIdForRoleId" resultType="string" parameterType="string">
+  		SELECT id FROM admin_user_role WHERE role_id = #{roleId}
+  	</select>
+</mapper>

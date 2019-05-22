@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bp.baseProject.mapper.SysMenuMapper" >
+
+  	
+	<select id="getMenuForParentId" resultType="com.bp.baseProject.entity.vo.MenuDTO" parameterType="string">
+		SELECT url,menu_cn menuName,icon,id,sort_no sortNo
+		FROM sys_menu
+		WHERE
+		parent_id=#{parentId}
+		and is_delete=0
+		ORDER BY sort_no ASC
+	</select>
+
+
+	<select id="getMenuForRoleId" resultType="com.bp.baseProject.entity.vo.MenuDTO" parameterType="string">
+		SELECT url,menu_cn menuName,icon,id,parent_id parentId,sort_no sortNo
+		FROM sys_menu
+		WHERE id IN (SELECT menu_id FROM admin_role_menu WHERE role_id=#{roleId})
+		and is_delete=0
+		ORDER BY sort_no ASC
+	</select>
+
+
+	<update id="deleteMenu" parameterType="string">
+		UPDATE sys_menu
+		SET is_delete = 1
+		WHERE id = #{menuId}
+	</update>
+
+	<update id="updateMenu" parameterType="com.bp.baseProject.entity.vo.MenuDTO">
+		UPDATE sys_menu
+		SET
+		<if test='url != null and url != ""'>
+			url = #{url},
+		</if>
+
+		<if test='menuName != null and menuName != ""'>
+			menu_cn = #{menuName},
+		</if>
+
+		<if test='icon != null and icon != ""'>
+			icon = #{icon},
+		</if>
+
+		<if test='sortNo != null and sortNo != ""'>
+			sort_no = #{sortNo},
+		</if>
+
+		updated_at = NOW()
+		WHERE id = #{id}
+	</update>
+
+	<insert id="insertMenu" parameterType="com.bp.baseProject.entity.vo.MenuDTO" >
+		INSERT INTO sys_menu (
+  			id,
+	  		url,
+	  		menu_cn,
+	  		icon,
+	  		parent_id,
+	  		sort_no
+  		)
+		VALUES
+			(
+			UUID(),
+			#{url},
+			#{menuName},
+			#{icon},
+			#{parentId},
+			#{sortNo}
+		)
+	</insert>
+
+
+</mapper>

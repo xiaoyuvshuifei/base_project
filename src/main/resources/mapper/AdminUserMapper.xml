@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bp.baseProject.mapper.AdminUserMapper">
+
+    <select id="selectAdminUserInfo" resultType="com.bp.baseProject.entity.AdminUser" parameterType="com.bp.baseProject.entity.AdminUser">
+  		SELECT
+		  u.id,
+		  u.NAME,
+		  u.mobile,
+		  u.is_super AS isSuper,
+		  u.remember_token AS rememberToken,
+		  u.create_time AS createdTime,
+		  u.update_time AS updateTime,
+		  u.last_login_time AS lastLoginTime,
+		  roles.display_name as roleName,
+		  roles.id as roleId,
+		  STATUS
+		FROM
+		    admin_users as u,
+			admin_user_role as admin,
+			admin_roles as roles
+			WHERE
+			u.id=admin.admin_user_id
+		  and
+			roles.id=admin.role_id
+		LIMIT #{limitFrom}, #{pageSize}
+  	</select>
+
+    <select id="selectAdminUserInfoCount" resultType="int" parameterType="com.bp.baseProject.entity.AdminUser">
+		SELECT 
+		  COUNT(1) 
+		FROM
+		  admin_users 
+  	</select>
+
+
+    <insert id="insertAdminUserInfo" useGeneratedKeys="true" keyProperty="id" parameterType="com.bp.baseProject.entity.AdminUser">
+  		INSERT INTO admin_users (id , NAME, PASSWORD, mobile)
+		VALUES
+		  (#{id},#{name}, #{password}, #{mobile})
+  	</insert>
+
+
+    <insert id="insertAdminUserRoles" parameterType="com.bp.baseProject.entity.AdminUser">
+        INSERT INTO admin_user_role (id,admin_user_id, role_id)
+        VALUES (UUID(),#{id}, #{roleId})
+    </insert>
+
+    <select id="selectAdminUserInfoById" parameterType="String" resultType="com.bp.baseProject.entity.AdminUser">
+		SELECT
+		  u.id,
+		  u.NAME,
+		  u.mobile,
+		  u.is_super AS isSuper,
+		  roles.display_name as roleName,
+		  roles.id as roleId
+		FROM
+		  admin_users as u,
+		  admin_user_role as admin,
+		  admin_roles as roles
+		WHERE
+			u.id=admin.admin_user_id
+		  and
+			roles.id=admin.role_id
+		  and
+			u.id=#{id}
+  	</select>
+
+
+    <select id="selectAdminUserInfoByName" parameterType="String" resultType="com.bp.baseProject.entity.AdminUser">
+  		SELECT 
+		  id,
+		  NAME,
+		  mobile,
+		  is_super AS isSuper
+		FROM
+		  admin_users 
+		WHERE name = #{name}
+  	</select>
+
+    <select id="selectAdminUserRole" parameterType="String" resultType="com.bp.baseProject.entity.AdminUserRole">
+  		SELECT 
+		  admin_user_id AS adminUserId, 
+		  role_id 	AS roleId
+		FROM
+		  admin_user_role 
+		WHERE admin_user_id = #{adminUserId}
+  	</select>
+
+    <delete id="deleteAdminUserRole" parameterType="String">
+  		DELETE 
+		FROM
+		  admin_user_role 
+		WHERE admin_user_id = #{adminUserId}
+  	</delete>
+
+    <update id="updateAdminUserInfo" parameterType="com.bp.baseProject.entity.AdminUser">
+        UPDATE
+        admin_users
+        SET
+        <if test='name != null and name != ""'>
+            NAME = #{name},
+        </if>
+        <if test='mobile != null and mobile != ""'>
+            mobile = #{mobile},
+        </if>
+        <if test='password != null and password != ""'>
+            PASSWORD = #{password},
+        </if>
+		update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteAdminUserInfo" parameterType="String">
+  		DELETE 
+		FROM
+		  admin_users 
+		WHERE id = #{id}
+  	</delete>
+
+
+</mapper>
